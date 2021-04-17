@@ -97,17 +97,17 @@ int main(int argc, char * argv[]) {
 
         if (n1 > 0 && n2 > 0) {
           //Download foto dari google drive
-          execlp("/usr/bin/wget", "wget", "--user-agent=\"Mozilla\"", "--no-check-certificate", "-b",
+          execlp("/usr/bin/wget", "wget", "--user-agent=\"Mozilla\"", "--no-check-certificate", "-b", "-q",
             "https://drive.google.com/u/0/uc?id=1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD&export=download",
             "-O Foto_for_Stevany.zip", NULL);;
         } else if (n1 == 0 && n2 > 0) {
           //Download Musik dari google drive
-          execlp("/usr/bin/wget", "wget", "--user-agent=\"Mozilla\"", "--no-check-certificate", "-b",
+          execlp("/usr/bin/wget", "wget", "--user-agent=\"Mozilla\"", "--no-check-certificate", "-b", "-q",
             "https://drive.google.com/u/0/uc?id=1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J&export=download",
             "-O Musik_for_Stevany.zip", NULL);
         } else if (n1 > 0 && n2 == 0) {
           //Download Film dari google drive
-          execlp("/usr/bin/wget", "wget", "--user-agent=\"Mozilla\"", "--no-check-certificate", "-b",
+          execlp("/usr/bin/wget", "wget", "--user-agent=\"Mozilla\"", "--no-check-certificate", "-b", "-q",
             "https://drive.google.com/u/0/uc?id=1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp&export=download",
             "-O Film_for_Stevany.zip", NULL);
         } else {
@@ -115,43 +115,56 @@ int main(int argc, char * argv[]) {
           int n3 = fork();
           int n4 = fork();
           if (n3 > 0 && n4 > 0) {
-            execlp("/usr/bin/unzip", "unzip", "*.zip", NULL); // unzip
+           // unzip
+           execlp("/usr/bin/unzip", "unzip", "*.zip", NULL);
           }
           //pindah ke folder musyik, fylm, pyoto
           else if (n3 == 0 && n4 > 0) {
+      sleep(5);
+         char * delete[] = {
+              "rm", "-rf",
+              "Pyoto",
+              "Fylm",
+              "Musyik",
+              NULL
+            };
+            execv("/bin/rm", delete);
+             
+          } 
+          else if (n3 > 0 && n4 == 0) {
+      sleep(7);
             char * movefilm[] = {
-              "mv",
-              "FILM/*.mp4",
+              "mv", "-v",
+              "FILM",
               "Fylm",
               NULL
             };
             execv("/bin/mv", movefilm);
-          } else if (n3 > 0 && n4 == 0) {
-            char * movemusik[] = {
-              "mv",
-              "MUSIK/*.mp3",
-              "Musyik",
-              NULL
-            };
-            execv("/bin/mv", movemusik);
           } else {
-            pid_t child_id2;
+            int n7 = fork();
+            int n8 = fork();
             int status;
 
-            child_id2 = fork();
+            if (n7 > 0 && n8 > 0) {
+              sleep(7);
+              char * movemusik[] = {
+                "mv", "-v",
+                "MUSIK",
+                "Musyik",
+                NULL
+              };
+              execv("/bin/mv", movemusik);
 
-            if (child_id2 < 0) {
-              exit(EXIT_FAILURE);
-            }
-            if (child_id2 == 0) {
+            } else if (n7 == 0 && n8 > 0) {
+              sleep(7);
               char * movefoto[] = {
-                "mv",
-                "FOTO/*",
+                "mv", "-v",
+                "FOTO",
                 "Pyoto",
                 NULL
               };
               execv("/bin/mv", movefoto);
-            } else {
+            } else if (n7 > 0 && n8 == 0) {
               // loop sampai HBD jam 22:22
               while (1) {
                 time_t rawtime;
@@ -188,9 +201,6 @@ int main(int argc, char * argv[]) {
                   "Pyoto",
                   "Fylm",
                   "Musyik",
-                  "FOTO",
-                  "FILM",
-                  "MUSIK",
                   NULL
                 };
                 execv("/bin/rm", deleteAll);
