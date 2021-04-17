@@ -239,7 +239,6 @@ int main(int argc, char * argv[]) {
   return (0);
 }
 ```
-- Kendala yang ditemukan program tidak bisa mendownload beserta belum terdapat waktunya selain itu terdapat kendala diwget yang tidak berjalan
 ---
 ## Soal Nomor 2
 Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang berisi banyak sekali foto peliharaan dan Ia diperintahkan untuk mengkategorikan foto-foto peliharaan tersebut. Loba merasa kesusahan melakukan pekerjaanya secara manual, apalagi ada kemungkinan ia akan diperintahkan untuk melakukan hal yang sama. Kamu adalah teman baik Loba dan Ia meminta bantuanmu untuk membantu pekerjaannya.
@@ -388,7 +387,7 @@ int main()
     }
 }
 ```
-- Kendala yang ditemukan masih bingung dengan penggunakan underscore
+- Kendala yang ditemukan saat membuat program adalah masih belum mengetahui bagaimana cara memisahkan dua hewan yang terdapat pada satu foto, yang dipisahkan oleh tanda underscore (_).
 ---
 ## Soal Nomor 3
 Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang di perusahan ternama yang bernama “FakeKos Corp.”, perusahaan yang bergerak dibidang keamanan data. Karena Ranora masih magang, maka beban tugasnya tidak sebesar beban tugas pekerja tetap perusahaan. Di hari pertama Ranora bekerja, pembimbing magang Ranora memberi tugas pertamanya untuk membuat sebuah program.
