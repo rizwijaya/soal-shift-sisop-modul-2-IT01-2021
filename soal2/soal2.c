@@ -38,7 +38,7 @@ void isifile(char nama[], char umur[], char kategori[]) {
         char lokasi[100];
 
         sprintf(lokasi, "petshop/%s/keterangan.txt", kategori);
-        fp = fopen(lokasi, "r+");
+        fp = fopen(lokasi, "a+");
 
         fprintf(fp, "nama : %s\n", nama);
         fprintf(fp, "umur : %s tahun\n\n", umur);
@@ -101,7 +101,7 @@ int main()
             if(strstr(&en->d_name[ext], ".jpg")){   //filter format file jpg
 
                 sprintf(namafile, "%s", en->d_name); //Dapatkan nama file
-
+                
                 char *token = strtok(en->d_name, ";");
                 while (token != NULL) { //Pisahkan nama file dengan deliminter
                     if (baris == 1) {  //deliminter pertama maka simpan ke kategori
@@ -119,11 +119,11 @@ int main()
                     token = strtok(NULL, ";");
                     baris++;
                 }
+                createfolder(kategori);
+                createfile(kategori);
+                movefile(kategori, namafile, nama);
+                isifile(nama, umur, kategori);
             }
-            createfolder(kategori);
-            createfile(kategori);
-            movefile(kategori, namafile, nama);
-            isifile(nama, umur, kategori);
         }
         closedir(directory);
     }
