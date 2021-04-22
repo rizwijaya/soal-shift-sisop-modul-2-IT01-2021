@@ -20,6 +20,8 @@
 
 #include <wait.h>
 
+#include <dirent.h>
+
 int main(int argc, char * argv[]) {
   pid_t process_id = 0;
   pid_t sid = 0;
@@ -123,7 +125,6 @@ int main(int argc, char * argv[]) {
       sleep(5);
          char * delete[] = {
               "rm", "-rf",
-              "Pyoto",
               "Fylm",
               "Musyik",
               NULL
@@ -157,13 +158,38 @@ int main(int argc, char * argv[]) {
 
             } else if (n7 == 0 && n8 > 0) {
               sleep(7);
-              char * movefoto[] = {
-                "mv", "-v",
-                "FOTO",
-                "Pyoto",
-                NULL
-              };
-              execv("/bin/mv", movefoto);
+              DIR *directory;
+              struct dirent *en;
+              char namafile[100];
+              directory = opendir("FOTO");
+              if (directory) {
+                  while ((en = readdir(directory)) != NULL) {    //Loop semua file yang terdapat di petshop
+                      int ext = strlen(en->d_name)-4;
+                      if(strstr(&en->d_name[ext], ".jpg")){   //filter format file jpg
+                          //Dapatkan nama file
+                          int n10 = fork();
+                          
+                          sprintf(namafile, "%s", en->d_name);
+                          char result [80];
+                          sprintf(result, "FOTO/%s", namafile);
+
+                          if (n10 == 0){
+                            char * movefoto[] = {
+                              "mv", "-v", 
+                              result,
+                              "Pyoto",
+                              NULL
+                            };
+                            execv("/bin/mv", movefoto);
+
+                          }
+                        while ((wait(NULL)) != n10);
+                      }
+                      
+                  }
+                  closedir(directory);
+              }
+              
             } else if (n7 > 0 && n8 == 0) {
               // loop sampai HBD jam 22:22
               while (1) {
@@ -201,6 +227,7 @@ int main(int argc, char * argv[]) {
                   "Pyoto",
                   "Fylm",
                   "Musyik",
+                  "FOTO",
                   NULL
                 };
                 execv("/bin/rm", deleteAll);
