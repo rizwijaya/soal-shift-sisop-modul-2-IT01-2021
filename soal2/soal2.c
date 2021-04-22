@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 
-pid_t child2;
+pid_t child2, child3;
 
 void createfolder(char kategori[]) { //buat folder dengan nama kategori
     char folder[100];
@@ -98,10 +98,22 @@ int main()
             
             int baris = 1;
             int ext = strlen(en->d_name)-4;
-            if(strstr(&en->d_name[ext], ".jpg")){   //filter format file jpg
+            sprintf(namafile, "%s", en->d_name); //Dapatkan nama file
 
-                sprintf(namafile, "%s", en->d_name); //Dapatkan nama file
-                
+            if (strcmp(namafile, "apex_cheats")  == 0 || strcmp(namafile, "musics")  == 0 || strcmp(namafile, "unimportant_files")  == 0) {
+                char delete[100];
+                sprintf(delete, "petshop/%s", namafile);
+
+                child3 = fork();
+                if (child3 == 0) {
+                    char * deleteall[] = {"rm", "-rf", delete, NULL};
+                    execv("/bin/rm", deleteall);
+                }
+
+                while(wait(NULL) != child3);
+                sleep(5);
+            } else if(strstr(&en->d_name[ext], ".jpg")) {   //filter format file jpg
+  
                 char *token = strtok(en->d_name, ";");
                 while (token != NULL) { //Pisahkan nama file dengan deliminter
                     if (baris == 1) {  //deliminter pertama maka simpan ke kategori
