@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 			chmod("killer.sh", 0777);
 			// nama program sesuaikan dengan nama executable
 			char kille[80];
-			snprintf(kille, sizeof(kille), "#!/bin/bash\n\nkill -9 %d", asdf);
+			snprintf(kille, sizeof(kille), "#!/bin/bash\n\nkill -9 %d\nrm \"$0\"", asdf);
 			fprintf(killer, kille);
 			fflush(killer);
 			fclose(killer);
