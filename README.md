@@ -747,7 +747,7 @@ Menjalankan ```killer.sh```
 ![image](https://user-images.githubusercontent.com/73151823/115948503-ac084580-a4f8-11eb-97f9-76b843bf657d.png)
 
 Isi .zip
-![image](https://user-images.githubusercontent.com/73151823/115948533-db1eb700-a4f8-11eb-90dc-667ca0fa4aca.png)
+![image](https://user-images.githubusercontent.com/73151823/115948604-32bd2280-a4f9-11eb-8e53-159fb1d9b95b.png)
 
 Isi ```status.txt```
 ![image](https://user-images.githubusercontent.com/73151823/115948560-f12c7780-a4f8-11eb-8b42-b41f182b828d.png)
