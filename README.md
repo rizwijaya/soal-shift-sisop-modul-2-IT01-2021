@@ -242,31 +242,144 @@ int main(int argc, char * argv[]) {
 ---
 ## Soal Nomor 2
 Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang berisi banyak sekali foto peliharaan dan Ia diperintahkan untuk mengkategorikan foto-foto peliharaan tersebut. Loba merasa kesusahan melakukan pekerjaanya secara manual, apalagi ada kemungkinan ia akan diperintahkan untuk melakukan hal yang sama. Kamu adalah teman baik Loba dan Ia meminta bantuanmu untuk membantu pekerjaannya.
-### Penyelesaian :
-- Mengextract zip yang diberikan ke dalam folder “/home/[user]/modul2/petshop”. Program harus bisa membedakan file dan folder dikerjakan dan menghapus folder-folder yang tidak dibutuhkan.
-- Membuatkan folder-folder yang dibutuhkan sesuai dengan isi zip. (kucing : “/petshop/cat”)
-- Setelah folder kategori berhasil dibuat, Memindahkan foto ke folder dengan kategori yang sesuai dan di rename dengan nama peliharaan.
-- Maka foto harus di pindah ke masing-masing kategori yang sesuai. Contoh: foto dengan nama “dog;baro;1_cat;joni;2.jpg” dipindah ke folder “/petshop/cat/joni.jpg”
-- Di setiap folder buatlah sebuah file "keterangan.txt". Format dibuat sesuai contoh. 
 
+## Source Code
+Source code dapat dilihat di sini [soal2.c](https://github.com/rizwijaya/soal-shift-sisop-modul-2-IT01-2021/blob/main/soal2/soal2.c)
+
+## Cara Pengerjaan
+### Analisis Soal
+Secara keseluruhan, hal yang harus dilakukan dalam soal tersebut adalah:
+1.  Mengextract zip yang diberikan ke dalam folder “/home/[user]/modul2/petshop”. Program harus bisa membedakan file dan folder dikerjakan dan menghapus folder-folder yang tidak dibutuhkan.
+2. Membuatkan folder-folder yang dibutuhkan sesuai dengan isi zip. (kucing : “/petshop/cat”)
+3. Setelah folder kategori berhasil dibuat, Memindahkan foto ke folder dengan kategori yang sesuai dan di rename dengan nama peliharaan.
+4. Maka foto harus di pindah ke masing-masing kategori yang sesuai. Contoh: foto dengan nama “dog;baro;1_cat;joni;2.jpg” dipindah ke folder “/petshop/cat/joni.jpg”
+5. Di setiap folder buatlah sebuah file "keterangan.txt". Format dibuat sesuai contoh. 
 
 Catatan :
 - Setiap data peliharaan disimpan sebagai nama foto dengan format [jenis peliharaan]:[nama peliharaan]:[umur peliharaan dalam tahun]. Jika terdapat lebih dari satu peliharaan, data dipisahkan menggunakan underscore(_).
 - Tidak boleh menggunakan fungsi system(), mkdir(), dan rename().
 - Menggunakan fork dan exec.
 
+### Penjelasan Program
+#### Library
+Berikut adalah library yang digunakan untuk menyelesaikan soal ini:
+
+```#include <stdlib.h>```= untuk fungsi-fungsi general
+
+```#include <sys/types.h>``` = untuk tipe data pid_t
+
+```#include <unistd.h>``` = untuk melakukan system call ```fork()```
+
+```#include <wait.h>``` = untuk melakukan fungsi ```wait ()```
+
+```#include <dirent.h>``` = untuk membaca atau membuka directory
+
+```#include <string.h>``` = untuk melakukan manipulasi string, misalnya ```strcmp()```
+
+```#include <stdio.h>``` = untuk standard input-output
+
+#### Program Utama
+Pada fungsi main ini berisi cara mengekstrack file .zip dan bagaimana memisahkan setiap string yang terdapat ```;``` dan ```_``` kebeberapa bagian.
 ```
-#include <stdlib.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <wait.h>
-#include <dirent.h>
-#include <string.h>
-#include <stdio.h>
+child2 = fork();
+if (child2 == 0){
+    char *unzip[] = {"unzip", "pets.zip", "-d",
+                    "petshop", NULL};
+    execv("/usr/bin/unzip", unzip);
+}
+while(wait(NULL) != child2);
 
-pid_t child2;
+sleep(5);
+```
+Dalam program diatas merupakan program untuk melakukan ekstrak file ```pets.zip``` kedalam directory petshop dengan menggunakan argument ```unzip``` yang kemudian dieksekusi menggunakan ```execv()```.
+```
+if (directory) {
+        while ((en = readdir(directory)) != NULL) {
+          .......
+          .......
+          .......
+        }
+        closedir(directory);
+}
+```
+Setelah melakukan ekstrak file ```.zip``` tersebut selanjutnya membuka folder ```petshop``` dengan menggunakan fungsi ```opendir``` dan ```readdir```. Dimana dalam membuka folder tersebut, pertama-tama melakukan pengecekan dengan menggunakan logika percabangan apakah folder dapat dibuka jika iya maka akan berlanjutnya dengan membaca file atau folder yang terdapat di directory ```petshop``` dengan menggunakan perulangan ```while``` dan apabila sudah selesai atau kondisi while sudah tidak terpenuhi maka akan menutup directory tersebut menggunakan ```closedir(directory)```.
+```
+directory = opendir("petshop");
+    if (directory) {
+        while ((en = readdir(directory)) != NULL) {    //Loop semua file yang terdapat di petshop
+            
+            int baris = 1;
+            int ext = strlen(en->d_name)-4;
+            sprintf(namafile, "%s", en->d_name); //Dapatkan nama file
+            .....
+            .....
+            .....
+    }
+```
+Kemudian dalam perulangan while melakukan inisialisasi nilai awal dari variabel ```baris = 1``` dan inisialisasi variabel ```ext``` dengan hasil dari ```strlen(en->d_name)-4``` yang akan menghasilkan ekstension dari file tersebut. 
+```
+sprintf(namafile, "%s", en->d_name); //Dapatkan nama file
+```
+Pada baris selanjutnya menggunakan ```sprintf``` untuk menyimpan nama file yang didapatkan kedalam variabel ```namafile```.
+```
+if (strcmp(namafile, "apex_cheats")  == 0 || strcmp(namafile, "musics")  == 0 || strcmp(namafile, "unimportant_files")  == 0) {
+    char delete[100];
+    sprintf(delete, "petshop/%s", namafile);
 
+    child3 = fork();
+    if (child3 == 0) {
+        char * deleteall[] = {"rm", "-rf", delete, NULL};
+        execv("/bin/rm", deleteall);
+    }
+
+    while(wait(NULL) != child3);
+    sleep(5);
+} else if(strstr(&en->d_name[ext], ".jpg")) {   //filter format file jpg
+      .....
+      .....
+}
+```
+Selanjutnya masih didalam perulangan ```while``` terdapat program untuk mengecek apakah file tersebut penting atau tidak, dimana dalam program ini menggunakan logika percabangan ```if else```.
+Pada ```if``` pertama apabila ditemukan file tidak penting maka akan melakukan penghapusan file tersebut dengan menggunakan argumen ```rm -rf```
+yang artinya akan menghapus folder atau file yang ditemukan secara keseluruhan.
+```
+if (strcmp(namafile, "apex_cheats")  == 0 || strcmp(namafile, "musics")  == 0 || strcmp(namafile, "unimportant_files")  == 0) {
+    .....
+    .....
+} else if(strstr(&en->d_name[ext], ".jpg")) {   //filter format file jpg
+
+    char *token = strtok(en->d_name, ";");
+    while (token != NULL) { //Pisahkan nama file dengan deliminter
+        if (baris == 1) {  //deliminter pertama maka simpan ke kategori
+            sprintf(kategori, "%s", token);
+        }else if (baris == 2) {  //deliminter kedua maka simpan ke nama
+            sprintf(nama, "%s", token);
+        }else if (baris == 3) {  //deliminter ketiga maka simpan ke umur
+            sprintf(umur, "%s", token);
+            strtok(umur, "_");
+            strtok(umur, "j");
+            if (umur[strlen(umur) - 1] == '.') {
+                umur[strlen(umur) - 1] = '\0';
+            }
+        }
+        token = strtok(NULL, ";");
+        baris++;
+    }
+    createfolder(kategori);
+    createfile(kategori);
+    movefile(kategori, namafile, nama);
+    isifile(nama, umur, kategori);
+}
+```
+Kemudian pada pengecekan yang kedua dengan menggunakan ```else if``` akan mengecek apakah format file tersebut merupakan file ```.jpg``` yang mana apabila kondisi terpenuhi maka akan melakukan pemisahan setiap karakter yang terdapat dari nama file tersebut yang terdapat tanda ```;```. 
+
+Dimana dalam melakukan pemecahan karakter tersebut menggunakan fungsi ```strtok``` yang terdapat pada c, kemudian dengan menggunakan logika percabangan ```if else``` akan mengecek apabila menemukan ```;``` pertama atau nilai ```baris == 1```, maka akan menyimpan baris pertama tersebut kedalam ```kategori```. Sedangkan apabila ```baris == 2``` akan menyimpan kedalam variabel ```nama``` dan apabila ```baris == 3``` maka akan menyimapan kedalam variabel ```umur```, kemudian apabila terdapat tanda ```_``` atau ```j``` maka akan melakukan split pada karakter, sedangkan apabila ditemukan ```.``` pada baris terakhir akan langsung diterminated menggunakan ```\0```.
+
+Kemudian memanggil fungsi ```createfolder, createfile, movefile, dan isifile```.
+
+#### Fungsi Buat Folder
+Selanjutnya dalam program, terdapat fungsi buat folder dimana dalam fungsi ini akan membuat folder baru berdasarkan dengan kategori yang ditemukan.
+```
 void createfolder(char kategori[]) { //buat folder dengan nama kategori
     char folder[100];
 
@@ -278,7 +391,23 @@ void createfolder(char kategori[]) { //buat folder dengan nama kategori
     }
     while(wait(NULL) != child2);
 }
-
+```
+Pertama menggabungkan strings ```petshop``` yang merupakan directory dengan variabel ```kategori``` menggunakan ```sprintf```. 
+```
+sprintf(folder, "petshop/%s", kategori);
+```
+Kemudian membuat proses baru dan menjalankan argument buat folder dengan menggunakan perintah ```mkdir``` yang selanjutnya dieksekusi oleh ```execv()```
+```
+child2 = fork();
+if (child2 == 0){
+    char *argv[] = {"mkdir", "-p", folder, NULL};
+    execv("/bin/mkdir", argv);
+}
+while(wait(NULL) != child2);
+```
+#### Fungsi Buat File Baru
+Fungsi buat file baru, dalam fungsi ini akan membuat file ```keterangan.txt``` kedalam directory ```kategori``` yang sebelumnya telah dibuat.
+```
 void createfile(char kategori[]) { //buat file keterangan di folder kategori
     char file[100];
 
@@ -290,7 +419,23 @@ void createfile(char kategori[]) { //buat file keterangan di folder kategori
     }
     while(wait(NULL) != child2);
 }
-
+```
+Pertama dengan menggunakan ```sprintf``` menggabungan strings ```petshop/...nama kategori.../keterangan.txt``` dengan variabel ```kategori``` yang kemudian disimpan dalam variabel ```file```.
+```
+sprintf(file, "petshop/%s/keterangan.txt", kategori);
+```
+Selanjutnya membuat proses baru dan setelah itu membuat file baru bernama ```keterangan.txt``` dengan menggunakan argument ```touch```.
+```
+child2 = fork();
+if (child2 == 0) {
+    char *argv[] = {"touch", file, NULL};
+    execv("/bin/touch", argv);
+}
+while(wait(NULL) != child2);
+```
+#### Fungsi Isi File Keterangan.txt
+Fungsi isi file keterangan.txt, dimana dalam fungsi ini akan melakukan pengisian nama, umur didalam file ```keterangan.txt``` disetiap folder kategori.
+```
 void isifile(char nama[], char umur[], char kategori[]) {
         FILE *fp;
         char lokasi[100];
@@ -303,12 +448,33 @@ void isifile(char nama[], char umur[], char kategori[]) {
 
         fclose(fp);
 }
+```
+Pertama dengan menggunakan ```sprintf``` menggabungan strings ```petshop/...nama kategori.../keterangan.txt``` dengan variabel ```kategori``` yang kemudian disimpan dalam variabel ```lokasi```
+```.
+sprintf(lokasi, "petshop/%s/keterangan.txt", kategori);
+```
+Selanjutnya membuka file ```keterangan.txt``` menggunakan fungsi ```fopen``` dan untuk menutupnya dapat menggunakan ```fclose(fp)```.
+```
+fp = fopen(lokasi, "a+");
+....
+....
+fclose(fp);
+```
+Kemudian menggunakan ```fprintf```, akan mengisi data nama dan umur difile ```keterangan.txt```.
+```
+fp = fopen(lokasi, "a+");
 
+fprintf(fp, "nama : %s\n", nama);
+fprintf(fp, "umur : %s tahun\n\n", umur);
+
+fclose(fp);
+```
+#### Fungsi Pindah File ke Folder dan Ganti Nama File
+Pada fungsi ini terdapat dua program yaitu untuk memindahkan file ke folder masing-masing ```kategori``` dan mengganti nama file yang dipindahkan tersebut.
+```
 void movefile(char kategori[], char namafile[], char nama[]) { //Fungsi pindah nama hewan ke folder kategori
-    char asal[100];
-    char ke[100];
-    char sebelum[100];
-    char sesudah[100];
+    ....
+    ....
 
     sprintf(asal, "petshop/%s", namafile);
     sprintf(ke, "petshop/%s/", kategori);
@@ -320,6 +486,16 @@ void movefile(char kategori[], char namafile[], char nama[]) { //Fungsi pindah n
     }
     while(wait(NULL) != child2);
 
+    ....
+    ....
+}
+```
+Menggabungkan strings ```petshop/nama filenya``` dengan variabel ```namafile``` yang kemudian disimpan ke variabel ```asal``` kemudian menggabungkan strings ```petshop/nama kategori``` dengan ```kategori``` dan disimpan ke variabel ```ke```.
+Langkah selanjutnya dalam program tersebut adalah membuat proses baru, dan kemudian melakukan pemindahan file ke folder kategori dengan menggunakan argument ```mv``` yang diexekusi oleh ```execv()```.
+```
+void movefile(char kategori[], char namafile[], char nama[]) { //Fungsi pindah nama hewan ke folder kategori
+    ....
+    ....
     sprintf(sebelum, "petshop/%s/%s", kategori, namafile);
     sprintf(sesudah, "petshop/%s/%s", kategori, nama);
     
@@ -330,68 +506,26 @@ void movefile(char kategori[], char namafile[], char nama[]) { //Fungsi pindah n
     }
     while(wait(NULL) != child2);
 }
-
-int main()
-{
-    DIR *directory;
-    struct dirent *en;
-
-    char kategori[100];
-    char nama[100];
-    char umur[100];
-    char namafile[100];
-
-    child2 = fork();
-    if (child2 == 0){
-        char *unzip[] = {"unzip", "pets.zip", "-d",
-                        "petshop", NULL};
-        execv("/usr/bin/unzip", unzip);
-    }
-    while(wait(NULL) != child2);
-    
-    sleep(5);
-    directory = opendir("petshop");
-    if (directory) {
-        while ((en = readdir(directory)) != NULL) {    //Loop semua file yang terdapat di petshop
-            
-            int baris = 1;
-            int ext = strlen(en->d_name)-4;
-            if(strstr(&en->d_name[ext], ".jpg")){   //filter format file jpg
-
-                sprintf(namafile, "%s", en->d_name); //Dapatkan nama file
-                
-                char *token = strtok(en->d_name, ";");
-                while (token != NULL) { //Pisahkan nama file dengan deliminter
-                    if (baris == 1) {  //deliminter pertama maka simpan ke kategori
-                        sprintf(kategori, "%s", token);
-                    }else if (baris == 2) {  //deliminter kedua maka simpan ke nama
-                        sprintf(nama, "%s", token);
-                    }else if (baris == 3) {  //deliminter ketiga maka simpan ke umur
-                        sprintf(umur, "%s", token);
-                        strtok(umur, "_");
-                        strtok(umur, "j");
-                        if (umur[strlen(umur) - 1] == '.') {
-                            umur[strlen(umur) - 1] = '\0';
-                        }
-                    }
-                    token = strtok(NULL, ";");
-                    baris++;
-                }
-                createfolder(kategori);
-                createfile(kategori);
-                movefile(kategori, namafile, nama);
-                isifile(nama, umur, kategori);
-            }
-        }
-        closedir(directory);
-    }
-}
 ```
-- Kendala yang ditemukan saat membuat program adalah masih belum mengetahui bagaimana cara memisahkan dua hewan yang terdapat pada satu foto, yang dipisahkan oleh tanda underscore (_).
----
+Selanjutnya adalah fungsi untuk melakukan rename file yang dipindah dengan nama dari hewan tersebut, dalam program yang telah dibuat. Pertama melakukan penggabungan strings menggunakan ```sprintf``` yaitu strings ```petshop/..kategori.../...namafile...``` dengan dua variabel yaitu ```kategori``` dan ```namafile``` yang selanjutnya disimpan kedalam variabel ```sebelum```, kemudian menggabungkan ```petshop/..kategori.../...nama...``` dengan variabel ```kategori``` dan ```nama``` dan disimpan dalam variabel ```sesudah```.
+Setelah itu dilanjutkan dengan membuat proses baru, dan kemudian melakukan rename nama file tersebut dengan menggunakan argument ```mv```.
+### Screenshot
+Berikut merupakan screenshot hasil running dari program yang telah dibuat.
 
+Saat Running
+![image](img/soal2/hasilrun1.PNG)
+Folder Setelah dipisahkan
+![image](img/soal2/dir.PNG)
+File di folder kategori
+![image](img/soal2/file.PNG)
+Isi dari file ```keterangan.txt```
+![image](img/soal2/ket.PNG)
+### Kendala
+- Kendala yang ditemukan diawal saat membuat program adalah saat memisahkan dua hewan yang terdapat pada satu foto, yang dipisahkan oleh tanda underscore (_).
+--- 
 ## Soal Nomor 3
 Source code dapat dilihat di sini [soal3.c](https://github.com/rizwijaya/soal-shift-sisop-modul-2-IT01-2021/blob/main/soal3/soal3.c)
+## Cara Pengerjaan
 ### Analisis Soal
 Secara keseluruhan, hal yang harus dilakukan dalam soal tersebut adalah:
 1. Membuat folder setiap 40 detik dengan nama sesuai timestamp ```[YYYY-mm-dd_HH:ii:ss]```
