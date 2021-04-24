@@ -744,7 +744,14 @@ Menjalankan dengan argumen ```-x```
 ![image](https://user-images.githubusercontent.com/73151823/115948158-93972b80-a4f6-11eb-811d-203694426a4d.png)
 
 Menjalankan ```killer.sh```
-![image](https://user-images.githubusercontent.com/73151823/115948164-a3af0b00-a4f6-11eb-83fd-72e3b883af37.png)
+![image](https://user-images.githubusercontent.com/73151823/115948503-ac084580-a4f8-11eb-97f9-76b843bf657d.png)
+
+Isi .zip
+![image](https://user-images.githubusercontent.com/73151823/115948533-db1eb700-a4f8-11eb-90dc-667ca0fa4aca.png)
+
+Isi ```status.txt```
+![image](https://user-images.githubusercontent.com/73151823/115948560-f12c7780-a4f8-11eb-8b42-b41f182b828d.png)
+
 
 #### Kendala
 Kendala kami adalah ketika membuat program berhenti dengan argumen ```-x```, kami tidak tahu bahwa ternyata harus menggunakan kill dengan PID baru bisa. 
