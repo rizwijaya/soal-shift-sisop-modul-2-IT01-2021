@@ -513,13 +513,21 @@ Setelah itu dilanjutkan dengan membuat proses baru, dan kemudian melakukan renam
 Berikut merupakan screenshot hasil running dari program yang telah dibuat.
 
 Saat Running
+
 ![image](img/soal2/hasilrun1.PNG)
+
 Folder Setelah dipisahkan
+
 ![image](img/soal2/dir.PNG)
+
 File di folder kategori
+
 ![image](img/soal2/file.PNG)
+
 Isi dari file ```keterangan.txt```
+
 ![image](img/soal2/ket.PNG)
+
 ### Kendala
 - Kendala yang ditemukan diawal saat membuat program adalah saat memisahkan dua hewan yang terdapat pada satu foto, yang dipisahkan oleh tanda underscore (_).
 --- 
