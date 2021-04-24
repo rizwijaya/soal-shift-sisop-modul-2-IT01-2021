@@ -239,6 +239,238 @@ int main(int argc, char * argv[]) {
   return (0);
 }
 ```
+
+### Penjelasan Program
+#### Library
+Berikut adalah library yang digunakan untuk menyelesaikan soal ini:
+
+```#include <sys/types.h>``` = untuk tipe data pid_t
+
+```#include <sys/stat.h>``` = untuk mengembalikan status waktu
+
+```#include <stdio.h>``` = untuk standard input-output
+
+```#include <stdlib.h>``` = untuk fungsi umum
+
+```#include <fcntl.h>``` = untuk proses id dalam proses kunci (```pid_t()```)
+
+```#include <errno.h>``` = untuk memberikan tambahan error pada sistem
+
+```#include <unistd.h>``` = untuk melakukan system call ```fork()```
+
+```#include <sysloq.h>``` = untuk mengirim pesan ke system logger
+
+```#include <string.h>``` = untuk melakukan manipulasi string, misalnya ```strcmp()```
+
+```#include <time.h>``` = untuk manipulasi date and time
+
+```#include <wait.h>``` = untuk melakukan fungsi ```wait ()```
+
+#### Fungsi main
+Pada fungsi main, program kami menerima 2 argumen. argumen ini nantinya digunakan untuk menentukan bash program mana yang akan dibuat:
+```
+int main(int argc, char *argv[])
+{
+  // isi fungsi
+}
+````
+
+#### Daemon Process
+Melakukan ```fork()``` pada parent process lalu membunuhnya agar sistem mengira proses tersebut selesai.
+```
+    pid_t process_id = 0;
+    pid_t sid = 0;
+    // buat child process
+    process_id = fork();
+    // indikasi fork() gagal
+    if (process_id < 0)
+    {
+        printf("fork failed!\n");
+        // Return in exit status
+        exit(1);
+    }
+    // PARENT PROCESS. harus dibunuh.
+    if (process_id > 0)
+    {
+        // return success exit status
+        exit(0);
+    }
+```
+Kemudian mengatur umask agar mendapatkan full akses terhadap file
+``` umask (0);```
+
+Mengatur SID agar child process tidak menjadi orphan 
+```
+    if (sid < 0)
+    {
+        // return gagal
+        exit(1);
+    }
+```
+
+Setelah itu mengubah working directory. Directory berbeda tergantung tiap komputer, jadi menyesuaikan 
+```
+chdir("/home/pepega/sisopShift2/soal1/");
+```
+
+Menutup file descriptor standar karena daemon tidak boleh mengakases terminal
+```
+    close(STDIN_FILENO);
+    close(STDOUT_FILENO);
+    close(STDERR_FILENO);
+```
+
+Terakhir, program utama akan berada di while loop
+```
+    while (1)
+    {
+      // program utama
+    }
+```
+## No 1a
+Untuk soal ini, membuat 3 folder dengan nama Musyik, Fylm, dan Pyoto menggunakan fork dan exec
+```
+child_id = fork();
+
+      if (child_id < 0) {
+        exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+      }
+      if (child_id == 0) {
+        // child
+ char * argv[] = {
+          "mkdir",
+          "-p",
+          "Musyik",
+          "Fylm",
+          "Pyoto",
+          NULL
+        };
+        execv("/bin/mkdir", argv);
+```
+## No 1b
+Untuk sub soal ini, program akan mendownload file foto, video, dan film dari link yang telah disediakan
+```
+ } else {
+        while ((wait( & status)) > 0);
+        int n1 = fork();
+        int n2 = fork();
+
+        if (n1 > 0 && n2 > 0) {
+          //Download foto dari google drive
+          execlp("/usr/bin/wget", "wget", "--user-agent=\"Mozilla\"", "--no-check-certificate", "-b", "-q",
+            "https://drive.google.com/u/0/uc?id=1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD&export=download",
+            "-O Foto_for_Stevany.zip", NULL);;
+        } else if (n1 == 0 && n2 > 0) {
+          //Download Musik dari google drive
+          execlp("/usr/bin/wget", "wget", "--user-agent=\"Mozilla\"", "--no-check-certificate", "-b", "-q",
+            "https://drive.google.com/u/0/uc?id=1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J&export=download",
+            "-O Musik_for_Stevany.zip", NULL);
+        } else if (n1 > 0 && n2 == 0) {
+          //Download Film dari google drive
+          execlp("/usr/bin/wget", "wget", "--user-agent=\"Mozilla\"", "--no-check-certificate", "-b", "-q",
+            "https://drive.google.com/u/0/uc?id=1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp&export=download",
+            "-O Film_for_Stevany.zip", NULL);
+        } else {
+          sleep(12); // tunggu file selesai didownload. 12 detik biar aman untuk internet lemot
+```
+Dilakukan perulangan dan penggunaan ```wget``` command untuk bisa mengunduh file. Lalu dilakukan ```sleep(12)``` dan penamaan filenya sudah disesuaikan dengan file yang didownload
+
+## No 1c
+Untuk sub soal ini, program harus mengextract file yang telah didownload. Disini kami menggunakan ```fork()```dan ```execlp``` unzip untuk mengextract file
+```
+ int n3 = fork();
+          int n4 = fork();
+          if (n3 > 0 && n4 > 0) {
+           // unzip
+           execlp("/usr/bin/unzip", "unzip", "*.zip", NULL);
+          }
+```
+
+## No 1d
+Untuk sub soal ini, program harus memindahkan file dari file yang telah diextract ke dalam file yang telah dibuat.
+```
+ char * movefilm[] = {
+              "mv", "-v",
+              "FILM",
+              "Fylm",
+              NULL
+            };
+            execv("/bin/mv", movefilm);
+          } else {
+            int n7 = fork();
+            int n8 = fork();
+            int status;
+
+            if (n7 > 0 && n8 > 0) {
+              sleep(7);
+              char * movemusik[] = {
+                "mv", "-v",
+                "MUSIK",
+                "Musyik",
+                NULL
+              };
+              execv("/bin/mv", movemusik);
+
+            } else if (n7 == 0 && n8 > 0) {
+              sleep(7);
+              char * movefoto[] = {
+                "mv", "-v",
+                "FOTO",
+                "Pyoto",
+                NULL
+              };
+              execv("/bin/mv", movefoto);
+```
+## No. 1e
+Untuk sub soal ini, program harus berjalan otomatis 6 jam sebelum waktu ulang tahun stevany 
+```
+ if (strcmp(time_now, "2021-04-09_16_22_00") == 0) {
+      pid_t child_id;
+      int status;
+```
+## No. 1f
+Untuk sub soal terakhir ini, folder akan di zip dengan nama Lopyu_Stevany.zip dan menghapus semua folder yang telah dibuat hingga hanya menyisakan folder zip dari hasil mendownload file dari link yang telah disediakan.
+```
+ char * zipAll[] = {
+                  "zip",
+                  "-r",
+                  "Lopyu_Stevany.zip",
+                  "Pyoto",
+                  "Fylm",
+                  "Musyik",
+                  NULL
+                };
+                execv("/usr/bin/zip", zipAll);
+              } else if (n5 == 0 && n6 > 0) {
+                // tunggu zip selesai dulu baru hapus folder
+                sleep(2);
+                char * deleteAll[] = {
+                  "rm",
+                  "-rf",
+                  "Pyoto",
+                  "Fylm",
+                  "Musyik",
+                  NULL
+                };
+                execv("/bin/rm", deleteAll);
+              } else if (n5 > 0 && n6 == 0) {
+                // hapus .zip sisanya
+                char * deleteAll2[] = {
+                  "rm",
+                  " Foto_for_Stevany.zip",
+                  " Musik_for_Stevany.zip",
+                  " Film_for_Stevany.zip",
+                  NULL
+                };
+                execv("/bin/rm", deleteAll2);
+              }
+
+            }
+
+          }
+```
+Untuk ```zip``` menggunakan option ```-r``` untuk dapat melakukan zip directory beserta semua isi di dalamnya. Lalu untuk menghapus folder dengan perintah ```rm```
+
 ---
 ## Soal Nomor 2
 Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang berisi banyak sekali foto peliharaan dan Ia diperintahkan untuk mengkategorikan foto-foto peliharaan tersebut. Loba merasa kesusahan melakukan pekerjaanya secara manual, apalagi ada kemungkinan ia akan diperintahkan untuk melakukan hal yang sama. Kamu adalah teman baik Loba dan Ia meminta bantuanmu untuk membantu pekerjaannya.
