@@ -471,6 +471,12 @@ Untuk sub soal terakhir ini, folder akan di zip dengan nama Lopyu_Stevany.zip da
 ```
 Untuk ```zip``` menggunakan option ```-r``` untuk dapat melakukan zip directory beserta semua isi di dalamnya. Lalu untuk menghapus folder dengan perintah ```rm```
 
+## Screenshot
+![image](https://user-images.githubusercontent.com/73151978/115979305-5cd11c00-a5af-11eb-94b1-e65048571590.png)
+
+Pada saat pukul 22.00
+![image](https://user-images.githubusercontent.com/73151978/115979341-96098c00-a5af-11eb-9767-e55de1d7db6e.png)
+
 ---
 ## Soal Nomor 2
 Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang berisi banyak sekali foto peliharaan dan Ia diperintahkan untuk mengkategorikan foto-foto peliharaan tersebut. Loba merasa kesusahan melakukan pekerjaanya secara manual, apalagi ada kemungkinan ia akan diperintahkan untuk melakukan hal yang sama. Kamu adalah teman baik Loba dan Ia meminta bantuanmu untuk membantu pekerjaannya.
